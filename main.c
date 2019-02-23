@@ -3,7 +3,7 @@
 #include "stm32f0xx_rcc.h"      // Enable peripheral clock
 #include "stm32f0xx_usart.h"      // 
 
-
+void led_toggle(void);
 GPIO_TypeDef* GetGPIOPort(uint16_t port)
 {
 	switch((port & 0xF0)>>4)
@@ -70,6 +70,12 @@ void InitUSART1()
 	USART_Cmd(USART1,ENABLE);
 
 	USART_HalfDuplexCmd(USART1, ENABLE);
+	
+	
+    /* Enable RXNE interrupt */
+    USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+    /* Enable USART1 global interrupt */
+    NVIC_EnableIRQ(USART1_IRQn);
 }
 
 void InitGPIOs()
@@ -175,17 +181,59 @@ int main(void)
 					USART1_Send(data[i]);
 			}
 			
-			 recive = USART1_Read();
-			if (recive!=0 && recive!= 0xFFFF)
-			{
-				USART1_Send(recive);
-				recive = 0;
-			}
+//			 recive = USART1_Read();
+//			if (recive!=0 && recive!= 0xFFFF)
+//			{
+//				USART1_Send(recive);
+//				recive = 0;
+//			}
 			
 		
 			
 		}
 	}
+	
+	void USART1_IRQHandler(void)
+{
+    /* RXNE handler */
+//    if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
+//    {
+        /* If received 't', toggle LED and transmit 'T' */
+        if((char)USART1_Read() == 't')
+        {
+            led_toggle();
+            USART_SendData(USART1, 'T');
+            /* Wait until Tx data register is empty, not really 
+             * required for this example but put in here anyway.
+             */
+            /*
+            while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET)
+            {
+            }*/
+        }
+    //}
+     
+    /* ------------------------------------------------------------ */
+    /* Other USART1 interrupts handler can go here ...             */
+}  
+
+
+void led_toggle(void)
+{
+    /* Read LED output (GPIOA PIN8) status */
+    uint8_t led_bit = GPIO_ReadOutputDataBit(GPIOC, GPIO_Pin_8);
+     
+    /* If LED output set, clear it */
+    if(led_bit == (uint8_t)Bit_SET)
+    {
+        GPIO_ResetBits(GPIOC, GPIO_Pin_8);
+    }
+    /* If LED output clear, set it */
+    else
+    {
+        GPIO_SetBits(GPIOC, GPIO_Pin_8);
+    }
+}
 		
 //void SetLedState(int state)
 //	{
