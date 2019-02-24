@@ -2,6 +2,17 @@
 #include "stm32f0xx_gpio.h"     // Pins Interface
 #include "stm32f0xx_rcc.h"      // Enable peripheral clock
 #include "stm32f0xx_usart.h"      // 
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>	
+#include <stdio.h>
+
+#define BuffSize  300
+char outBuff[BuffSize];
+char inBuff[BuffSize];
+int inBuffIndex = 0; 
+int mode = 1;
+
 
 void led_toggle(void);
 GPIO_TypeDef* GetGPIOPort(uint16_t port)
@@ -161,60 +172,86 @@ uint16_t USART1_Read()
 
 }
 
+void SendData(char* sendPack)
+{
+	int i=0;
+	char outBuf[100] = "";
+	strcpy(outBuf,sendPack);
+	int size = sizeof(outBuf);
+	//USART1_Send(data);
+	for (i=0 ; i< size;i++)
+			{
+				
+				if (outBuf[i] != 0x00)
+					USART1_Send(outBuf[i]);
+				else
+					break;
+			}
+}
 int main(void) 
 	{
 		RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOC | RCC_APB2Periph_ADC1, ENABLE);
 		
 		InitGPIOs();
 		InitUSART1();
+		SendData("Aganya - start Program");
+		char message[100];
 		int i =0;
-		char data[] = "Aganya";
-		uint16_t recive = 0;
-		uint16_t send = (uint16_t)"Aganya";
-		
-		
 		while(1)
 		{
-			for (i=0 ; i< sizeof(data);i++)
-			{
-				if (data[i] != 0x00)
-					USART1_Send(data[i]);
-			}
-			
-//			 recive = USART1_Read();
-//			if (recive!=0 && recive!= 0xFFFF)
-//			{
-//				USART1_Send(recive);
-//				recive = 0;
-//			}
-			
-		
-			
+			sprintf(message,"time = %d\n\r",i);
+			//SendData(message);
+			i++;
+			if(i>999999)
+				i=0;
 		}
 	}
 	
 	void USART1_IRQHandler(void)
 {
-    /* RXNE handler */
-//    if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
-//    {
-        /* If received 't', toggle LED and transmit 'T' */
-        if((char)USART1_Read() == 't')
-        {
-            led_toggle();
-            USART_SendData(USART1, 'T');
-            /* Wait until Tx data register is empty, not really 
-             * required for this example but put in here anyway.
-             */
-            /*
-            while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET)
-            {
-            }*/
-        }
-    //}
-     
-    /* ------------------------------------------------------------ */
-    /* Other USART1 interrupts handler can go here ...             */
+	
+//	while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+//	USART_SendData(USART1, 'X');
+		char buff[BuffSize]="";
+		char temp = 0x00;
+		char empty = 0xFF;
+		int num = 123;
+		char buf[100] = "";
+		inBuffIndex=0;
+
+		while(1)
+		{
+			temp = USART1_Read();
+			if(temp != empty)
+			{
+			buff[inBuffIndex] = temp;
+			inBuffIndex++;
+			temp = 0x00;
+			if(inBuffIndex >= BuffSize)
+				break;
+			}
+			else
+				break;
+		}
+		if(inBuffIndex>0)
+		{
+			
+			strcpy(inBuff,buff);
+			switch(mode)
+			{
+				case 0: // loopback
+					SendData(buff);
+					break;
+				
+				case 1://analyse data				
+					// convert 123 to string [buf]
+					sprintf(buf,"in pack size %d\n\r",inBuffIndex);
+					
+					SendData(buf);
+					break;
+			}
+		}
+
 }  
 
 
