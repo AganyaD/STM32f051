@@ -12,6 +12,7 @@ char outBuff[BuffSize];
 char inBuff[BuffSize];
 int inBuffIndex = 0; 
 int mode = 1;
+int Uart2Budrate = 115200;
 
 
 void led_toggle(void);
@@ -89,10 +90,53 @@ void InitUSART1()
     NVIC_EnableIRQ(USART1_IRQn);
 }
 
+void InitUSART2()
+{
+	USART_InitTypeDef USART_InitStructure;
+	GPIO_InitTypeDef GPIO_InitStructure;
+
+	RCC_APB2PeriphClockCmd(RCC_APB1Periph_USART2,ENABLE);
+
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource2, GPIO_AF_1);
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource3, GPIO_AF_1);
+
+	GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_2 | GPIO_Pin_3;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+	USART_InitStructure.USART_BaudRate = Uart2Budrate;
+	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+	USART_InitStructure.USART_StopBits = USART_StopBits_1;
+	USART_InitStructure.USART_Parity = USART_Parity_No;
+	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+	USART_Init(USART2, &USART_InitStructure);
+
+	USART_Cmd(USART2,ENABLE);
+
+	USART_HalfDuplexCmd(USART2, ENABLE);
+	
+	
+    /* Enable RXNE interrupt */
+    USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
+    /* Enable USART1 global interrupt */
+    NVIC_EnableIRQ(USART2_IRQn);
+}
+
 void InitGPIOs()
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_Init(GPIOC, &GPIO_InitStructure);
+	
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_OD;
@@ -194,6 +238,11 @@ int main(void)
 		
 		InitGPIOs();
 		InitUSART1();
+//		GPIO_Init(GPIOC,
+//		GPIO_DeInit(GPIOC);
+//		GPIO_WriteBit(GPIOC, GPIO_Pin_8, Bit_SET);
+		GPIO_SetBits(GPIOC,GPIO_Pin_8);
+//		GPIO_ResetBits(GPIOC,GPIO_Pin_8);
 		SendData("Aganya - start Program");
 		char message[100];
 		int i =0;
@@ -202,8 +251,15 @@ int main(void)
 			sprintf(message,"time = %d\n\r",i);
 			//SendData(message);
 			i++;
-			if(i>999999)
+			if(i>9999)
+			{
+				if (GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_8) ==(uint8_t)Bit_RESET)
+					GPIO_SetBits(GPIOC,GPIO_Pin_8);
+				else
+					GPIO_ResetBits(GPIOC,GPIO_Pin_8);
 				i=0;
+			}
+				
 		}
 	}
 	
@@ -254,6 +310,10 @@ int main(void)
 
 }  
 
+void USART2_IRQHandler(void)
+{
+	
+}
 
 void led_toggle(void)
 {
