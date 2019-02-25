@@ -95,8 +95,8 @@ void InitUSART2()
 	USART_InitTypeDef USART_InitStructure;
 	GPIO_InitTypeDef GPIO_InitStructure;
 
-	RCC_APB2PeriphClockCmd(RCC_APB1Periph_USART2,ENABLE);
-
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2,ENABLE);
+	
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource2, GPIO_AF_1);
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource3, GPIO_AF_1);
 
@@ -372,19 +372,20 @@ void USART2_IRQHandler(void)
 		{
 			
 			strcpy(inBuff,buff);
-			switch(mode)
-			{
-				case 0: // loopback
-					SendData(buff,USART2);
-					break;
-				
-				case 1://analyse data				
-					// convert 123 to string [buf]
-					sprintf(buf,"in uart2 pack size %d\n\r",inBuffIndex2);
-					
-					SendData(buf,USART2);
-					break;
-			}
+			SendData(buff,USART2);
+//			switch(mode)
+//			{
+//				case 0: // loopback
+//					SendData(buff,USART2);
+//					break;
+//				
+//				case 1://analyse data				
+//					// convert 123 to string [buf]
+//					sprintf(buf,"in uart2 pack size %d\n\r",inBuffIndex2);
+//					
+//					SendData(buf,USART2);
+//					break;
+//			}
 		}
 		
 		
