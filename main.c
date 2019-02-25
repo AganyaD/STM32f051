@@ -107,7 +107,7 @@ void InitUSART2()
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	USART_InitStructure.USART_BaudRate = Uart2Budrate;
+	USART_InitStructure.USART_BaudRate = 115200;
 	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
 	USART_InitStructure.USART_StopBits = USART_StopBits_1;
 	USART_InitStructure.USART_Parity = USART_Parity_No;
@@ -144,23 +144,26 @@ void InitGPIOs()
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3 |  GPIO_Pin_4 |  GPIO_Pin_5;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 |  GPIO_Pin_5;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
-
+  //0x48000000 GPIOA
+	//GPIO_Pin_1 0002
 	uint16_t portPin = 0xA1;
 	GPIO_TypeDef* gpio_port = GetGPIOPort(portPin);
 	uint32_t gpio_pin = GetGPIOPpin(portPin);
 	GPIO_WriteBit(gpio_port,gpio_pin,1);
 	
-	portPin = 0xA3;
-	gpio_pin = GetGPIOPpin(portPin);
-	gpio_port = GetGPIOPort(portPin);
-	GPIO_WriteBit(gpio_port,gpio_pin,0);
-	
+//	//0x48000000 GPIOA
+//	//GPIO_Pin_1 0002
+//	portPin = 0xA3;
+//	gpio_pin = GetGPIOPpin(portPin);
+//	gpio_port = GetGPIOPort(portPin);
+//	GPIO_WriteBit(gpio_port,gpio_pin,0);
+//	
 	portPin = 0xA5;
 	gpio_pin = GetGPIOPpin(portPin);
 	gpio_port = GetGPIOPort(portPin);
@@ -182,6 +185,12 @@ void USART1_Send(uint16_t byte)
 {
 	while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
 	USART_SendData(USART1, byte);
+}
+
+void USART2_Send(uint16_t byte)
+{
+	while(USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET);
+	USART_SendData(USART2, byte);
 }
 
 void SetupTimer(uint32_t delay)
@@ -216,7 +225,21 @@ uint16_t USART1_Read()
 
 }
 
-void SendData(char* sendPack)
+uint16_t USART2_Read()
+{
+	uint16_t value;
+	SetupTimer(5);
+	while(USART_GetFlagStatus(USART2, USART_FLAG_RXNE) == RESET )
+	{
+		if(!IsTimerExpired())
+				return 0xFFFF;
+	}
+	value=USART_ReceiveData(USART2);
+	return value;
+
+}
+
+void SendData(char* sendPack ,USART_TypeDef* uart)
 {
 	int i=0;
 	char outBuf[100] = "";
@@ -227,7 +250,13 @@ void SendData(char* sendPack)
 			{
 				
 				if (outBuf[i] != 0x00)
-					USART1_Send(outBuf[i]);
+				{
+					if (uart == USART1)
+						USART1_Send(outBuf[i]);
+					else
+						if (uart == USART2)
+						USART2_Send(outBuf[i]);
+				}
 				else
 					break;
 			}
@@ -238,12 +267,14 @@ int main(void)
 		
 		InitGPIOs();
 		InitUSART1();
+		InitUSART2();
 //		GPIO_Init(GPIOC,
 //		GPIO_DeInit(GPIOC);
 //		GPIO_WriteBit(GPIOC, GPIO_Pin_8, Bit_SET);
 		GPIO_SetBits(GPIOC,GPIO_Pin_8);
 //		GPIO_ResetBits(GPIOC,GPIO_Pin_8);
-		SendData("Aganya - start Program");
+		SendData("Aganya - start Program Uart 2 ",USART2);
+		SendData("Aganya - start Program Uart 1 ",USART1);
 		char message[100];
 		int i =0;
 		while(1)
@@ -296,14 +327,14 @@ int main(void)
 			switch(mode)
 			{
 				case 0: // loopback
-					SendData(buff);
+					SendData(buff,USART1);
 					break;
 				
 				case 1://analyse data				
 					// convert 123 to string [buf]
 					sprintf(buf,"in pack size %d\n\r",inBuffIndex);
 					
-					SendData(buf);
+					SendData(buf,USART1);
 					break;
 			}
 		}
@@ -313,6 +344,50 @@ int main(void)
 void USART2_IRQHandler(void)
 {
 	
+	
+	//	while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+//	USART_SendData(USART1, 'X');
+		char buff[BuffSize]="";
+		char temp = 0x00;
+		char empty = 0xFF;
+		int num = 123;
+		char buf[100] = "";
+		int inBuffIndex2=0;
+
+		while(1)
+		{
+			temp = USART2_Read();
+			if(temp != empty)
+			{
+			buff[inBuffIndex2] = temp;
+			inBuffIndex2++;
+			temp = 0x00;
+			if(inBuffIndex2 >= BuffSize)
+				break;
+			}
+			else
+				break;
+		}
+		if(inBuffIndex2>0)
+		{
+			
+			strcpy(inBuff,buff);
+			switch(mode)
+			{
+				case 0: // loopback
+					SendData(buff,USART2);
+					break;
+				
+				case 1://analyse data				
+					// convert 123 to string [buf]
+					sprintf(buf,"in uart2 pack size %d\n\r",inBuffIndex2);
+					
+					SendData(buf,USART2);
+					break;
+			}
+		}
+		
+		
 }
 
 void led_toggle(void)
