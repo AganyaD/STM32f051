@@ -269,6 +269,8 @@ void SendData(char* sendPack ,USART_TypeDef* uart)
 					break;
 			}
 }
+
+/////////////////////////////////////MAIN//////////////////////////////////
 int main(void) 
 	{
 		RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOC | RCC_APB2Periph_ADC1, ENABLE);
@@ -287,10 +289,10 @@ int main(void)
 		int i =0;
 		while(1)
 		{
-			sprintf(message,"time = %d\n\r",i);
+			
 			//SendData(message);
 			i++;
-			if(i>9999)
+			if(i>999999)
 			{
 				sprintf(message,"breakeValue = %d\n\r",breakeValue);
 				SendData(message,USART1);
@@ -304,6 +306,8 @@ int main(void)
 				
 		}
 	}
+	/////////////////////////////////////MAIN//////////////////////////////////
+	
 	
 	void USART1_IRQHandler(void)
 {
@@ -391,11 +395,16 @@ void USART2_IRQHandler(void)
 		int num = 123;
 		char buf[100] = "";
 		int inBuffIndex2=0;
+		char dateByt[2];
+		char infomessage[50]="";
 	
 	
 		char dataLength[1] = "";
 		strcpy(messageID,"");
 		strcpy(messageData,"");
+	
+		sprintf(infomessage,"info : Start uart 2 reading \n\r");
+		SendData(infomessage,USART1);
 
 		while(1)
 		{
@@ -441,6 +450,8 @@ void USART2_IRQHandler(void)
 				case 3:
 						//get message ID
 						messageID[2] = temp;
+						sprintf(infomessage,"info : messageID =  %s\n\r",messageID);
+						SendData(infomessage,USART1);
 						if(checkMessageID() == True)
 							mode = 0;
 						else
@@ -448,7 +459,10 @@ void USART2_IRQHandler(void)
 				break;
 				
 				case 4://0
-					messageData[mode - 4] = temp;
+					dateByt[0] = buff[i];
+					i++;
+					dateByt[1] = buff[i];
+					messageData[0] = atoi(dateByt);
 					if((mode - 3)<length)
 						mode++;
 					else
@@ -456,7 +470,11 @@ void USART2_IRQHandler(void)
 				break;
 				
 				case 5://1
-					messageData[mode - 4] = temp;
+					dateByt[0] = buff[i];
+					i++;
+					dateByt[1] = buff[i];
+					messageData[1] = atoi(dateByt);
+				
 					if((mode - 3)<length)
 						mode++;
 					else
@@ -464,7 +482,11 @@ void USART2_IRQHandler(void)
 				break;
 				
 				case 6://2
-					messageData[mode - 4] = temp;
+					dateByt[0] = buff[i];
+					i++;
+					dateByt[1] = buff[i];
+					messageData[2] = atoi(dateByt);
+				
 					if((mode - 3)<length)
 						mode++;
 					else
@@ -472,7 +494,10 @@ void USART2_IRQHandler(void)
 				break;
 				
 				case 7://3
-					messageData[mode - 4] = temp;
+					dateByt[0] = buff[i];
+					i++;
+					dateByt[1] = buff[i];
+					messageData[3] = atoi(dateByt);
 					if((mode - 3)<length)
 						mode++;
 					else
@@ -480,7 +505,10 @@ void USART2_IRQHandler(void)
 				break;
 				
 				case 8://4
-					messageData[mode - 4] = temp;
+					dateByt[0] = buff[i];
+					i++;
+					dateByt[1] = buff[i];
+					messageData[4] = atoi(dateByt);
 					if((mode - 3)<length)
 						mode++;
 					else
@@ -488,7 +516,10 @@ void USART2_IRQHandler(void)
 				break;
 				
 				case 9://5
-					messageData[mode - 4] = temp;
+					dateByt[0] = buff[i];
+					i++;
+					dateByt[1] = buff[i];
+					messageData[5] = atoi(dateByt);
 					if((mode - 3)<length)
 						mode++;
 					else
@@ -496,7 +527,10 @@ void USART2_IRQHandler(void)
 				break;
 				
 				case 10://6
-					messageData[mode - 4] = temp;
+					dateByt[0] = buff[i];
+					i++;
+					dateByt[1] = buff[i];
+					messageData[6] = atoi(dateByt);
 					if((mode - 3)<length)
 						mode++;
 					else
@@ -504,7 +538,10 @@ void USART2_IRQHandler(void)
 				break;
 				
 				case 11://7
-					messageData[mode - 4] = temp;
+					dateByt[0] = buff[i];
+					i++;
+					dateByt[1] = buff[i];
+					messageData[7] = atoi(dateByt);
 					mode = 13;
 				break;
 				
