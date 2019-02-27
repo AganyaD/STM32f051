@@ -7,12 +7,20 @@
 #include <stdlib.h>	
 #include <stdio.h>
 
+
 #define BuffSize  300
+#define True			1
+#define False			0
 char outBuff[BuffSize];
 char inBuff[BuffSize];
 int inBuffIndex = 0; 
-int mode = 1;
-int Uart2Budrate = 115200;
+int mode = 0;
+int Uart2Budrate = 57600;
+char calcLogic[2] = "00";
+char messageData[8] = "";
+char messageID[3]="";
+int breakeValue = 0;
+
 
 
 void led_toggle(void);
@@ -107,7 +115,7 @@ void InitUSART2()
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	USART_InitStructure.USART_BaudRate = 115200;
+	USART_InitStructure.USART_BaudRate = Uart2Budrate;
 	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
 	USART_InitStructure.USART_StopBits = USART_StopBits_1;
 	USART_InitStructure.USART_Parity = USART_Parity_No;
@@ -284,6 +292,9 @@ int main(void)
 			i++;
 			if(i>9999)
 			{
+				sprintf(message,"breakeValue = %d\n\r",breakeValue);
+				SendData(message,USART1);
+				
 				if (GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_8) ==(uint8_t)Bit_RESET)
 					GPIO_SetBits(GPIOC,GPIO_Pin_8);
 				else
@@ -341,18 +352,50 @@ int main(void)
 
 }  
 
+uint16_t checkMessageID()
+{
+	//0f1
+	if (messageID[0] =='0' && messageID[1] =='F' && messageID[0] =='1')
+	{
+		calcLogic[0] = 0x02;
+		calcLogic[1] = 0x01;
+		return True;
+	}
+	else
+	{
+		return False;
+	}
+}
+
+int getValue()
+{
+	int val =0;
+	
+	if (messageID[0] =='0' && messageID[1] =='F' && messageID[0] =='1')
+	{
+		breakeValue = val = (int)messageData[0];
+	}
+	else
+	{
+		
+	}
+	
+	return val;
+}
+
 void USART2_IRQHandler(void)
 {
-	
-	
-	//	while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-//	USART_SendData(USART1, 'X');
 		char buff[BuffSize]="";
 		char temp = 0x00;
 		char empty = 0xFF;
 		int num = 123;
 		char buf[100] = "";
 		int inBuffIndex2=0;
+	
+	
+		char dataLength[1] = "";
+		strcpy(messageID,"");
+		strcpy(messageData,"");
 
 		while(1)
 		{
@@ -368,25 +411,118 @@ void USART2_IRQHandler(void)
 			else
 				break;
 		}
-		if(inBuffIndex2>0)
+		int i =0;
+		char mode =0;
+		uint16_t length = 0;
+		for(i=0;i<inBuffIndex2;i++)
 		{
+			temp = buff[i];
 			
-			strcpy(inBuff,buff);
-			SendData(buff,USART2);
-//			switch(mode)
-//			{
-//				case 0: // loopback
-//					SendData(buff,USART2);
-//					break;
-//				
-//				case 1://analyse data				
-//					// convert 123 to string [buf]
-//					sprintf(buf,"in uart2 pack size %d\n\r",inBuffIndex2);
-//					
-//					SendData(buf,USART2);
-//					break;
-//			}
+			switch(mode)
+			{
+				case 0:
+					if(temp=='t')
+					{
+						mode = 1;
+					}
+					break;
+				case 1:
+						//get message ID
+						messageID[0] = temp;
+						mode = 2;
+				break;
+				
+				case 2:
+						//get message ID
+						messageID[1] = temp;
+						mode = 3;
+				break;
+				
+				case 3:
+						//get message ID
+						messageID[2] = temp;
+						if(checkMessageID() == True)
+							mode = 0;
+						else
+							mode = 12;
+				break;
+				
+				case 4://0
+					messageData[mode - 4] = temp;
+					if((mode - 3)<length)
+						mode++;
+					else
+						mode = 13;
+				break;
+				
+				case 5://1
+					messageData[mode - 4] = temp;
+					if((mode - 3)<length)
+						mode++;
+					else
+						mode = 13;
+				break;
+				
+				case 6://2
+					messageData[mode - 4] = temp;
+					if((mode - 3)<length)
+						mode++;
+					else
+						mode = 13;
+				break;
+				
+				case 7://3
+					messageData[mode - 4] = temp;
+					if((mode - 3)<length)
+						mode++;
+					else
+						mode = 13;
+				break;
+				
+				case 8://4
+					messageData[mode - 4] = temp;
+					if((mode - 3)<length)
+						mode++;
+					else
+						mode = 13;
+				break;
+				
+				case 9://5
+					messageData[mode - 4] = temp;
+					if((mode - 3)<length)
+						mode++;
+					else
+						mode = 13;
+				break;
+				
+				case 10://6
+					messageData[mode - 4] = temp;
+					if((mode - 3)<length)
+						mode++;
+					else
+						mode = 13;
+				break;
+				
+				case 11://7
+					messageData[mode - 4] = temp;
+					mode = 13;
+				break;
+				
+				case 12:
+					length = temp&0x0F;
+					mode = 4;
+					break;
+				
+				case 13:
+					getValue();
+					mode = 0;
+				break;
+			}
+				
 		}
+		
+		sprintf(buf,"in pack size %d\n\r",inBuffIndex2);			
+		SendData(buf,USART1);
 		
 		
 }
