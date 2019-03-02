@@ -12,14 +12,24 @@
 #define True			1
 #define False			0
 char outBuff[BuffSize];
-char inBuff[BuffSize];
+char inBuff1[BuffSize];
+char inBuff2[BuffSize];
 int inBuffIndex = 0; 
-int mode = 0;
+int inBuffIndex2 = 0; 
+int readIndex = 0; 
+int readIndex2 = 0; 
+char mode =0;
+uint16_t tempReciveByte;
+uint16_t length = 0;
+char dataByte[2];
+uint16_t dataByte_flag = False;
+
 int Uart2Budrate = 57600;
 char calcLogic[2] = "00";
 char messageData[8] = "";
 char messageID[3]="";
 int breakeValue = 0;
+int breakLevel[6] = {30,60,90,120,150,170};
 
 
 
@@ -138,7 +148,11 @@ void InitGPIOs()
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | 
+																GPIO_Pin_2 | GPIO_Pin_3 |
+																GPIO_Pin_4 | GPIO_Pin_5 |
+																GPIO_Pin_6 | GPIO_Pin_7 |
+																GPIO_Pin_8 | GPIO_Pin_9;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
@@ -270,7 +284,39 @@ void SendData(char* sendPack ,USART_TypeDef* uart)
 			}
 }
 
-/////////////////////////////////////MAIN//////////////////////////////////
+uint16_t readUart(USART_TypeDef* USARTx)
+{
+	
+		tempReciveByte = 0xFFFF;
+		char dummyarry[1];
+		if (USART_GetFlagStatus(USARTx, USART_FLAG_RXNE) != RESET)
+			{
+				if(USARTx == USART1)
+				{tempReciveByte = USART1_Read();}
+				else
+				{tempReciveByte = USART2_Read();}
+			
+				if(tempReciveByte != 0xFFFF)
+				{
+					//tempReciveByte = USART1_Read();
+//					inBuff1[inBuffIndex] = tempReciveByte;
+					dummyarry[0] =	tempReciveByte;
+					SendData(dummyarry,USARTx);
+					return True;
+				}
+			}
+	return False; 
+}
+
+void reciveCanMessage();
+
+//void InfoMessage(char *message)
+//{
+//	char buf[100];
+//	sprintf(buf,"*************breake value = %d\n\r",breakeValue);
+//	SendData(buf,USART1);
+//}
+/////////////////////main//////////////////////////////////////////////main/////////////////////////
 int main(void) 
 	{
 		RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOC | RCC_APB2Periph_ADC1, ENABLE);
@@ -281,21 +327,40 @@ int main(void)
 //		GPIO_Init(GPIOC,
 //		GPIO_DeInit(GPIOC);
 //		GPIO_WriteBit(GPIOC, GPIO_Pin_8, Bit_SET);
-		GPIO_SetBits(GPIOC,GPIO_Pin_8);
+//		GPIO_SetBits(GPIOC,GPIO_Pin_8);
 //		GPIO_ResetBits(GPIOC,GPIO_Pin_8);
 		SendData("Aganya - start Program Uart 2 ",USART2);
 		SendData("Aganya - start Program Uart 1 ",USART1);
 		char message[100];
 		int i =0;
+		int j = 49999;
+		
 		while(1)
 		{
-			
 			//SendData(message);
-			i++;
-			if(i>999999)
+			//read from uart1
+			if(readIndex!=inBuffIndex)
 			{
-				sprintf(message,"breakeValue = %d\n\r",breakeValue);
-				SendData(message,USART1);
+				if (GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_9) ==(uint8_t)Bit_RESET)
+					GPIO_SetBits(GPIOC,GPIO_Pin_9);
+				else
+					GPIO_ResetBits(GPIOC,GPIO_Pin_9);
+				
+				
+			}
+			
+			//recive UART2
+			if(readIndex2 != inBuffIndex2)
+			{
+				reciveCanMessage();
+			}
+			
+			i++;
+			if(i>j)
+			{
+				j-=100;
+//				sprintf(message,"breakeValue = %d\n\r",breakeValue);
+//				SendData(message,USART1);
 				
 				if (GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_8) ==(uint8_t)Bit_RESET)
 					GPIO_SetBits(GPIOC,GPIO_Pin_8);
@@ -303,63 +368,94 @@ int main(void)
 					GPIO_ResetBits(GPIOC,GPIO_Pin_8);
 				i=0;
 			}
+			if (j<200)
+				j = 49999;
 				
 		}
 	}
-	/////////////////////////////////////MAIN//////////////////////////////////
-	
-	
-	void USART1_IRQHandler(void)
-{
+/////////////////////main//////////////////////////////////////////////main/////////////////////////	
+void USART1_IRQHandler(void)
+	{
 	
 //	while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
 //	USART_SendData(USART1, 'X');
-		char buff[BuffSize]="";
+//		char buff[BuffSize]="";
 		char temp = 0x00;
-		char empty = 0xFF;
-		int num = 123;
-		char buf[100] = "";
-		inBuffIndex=0;
+		uint16_t empty = 0xFFFF;
+//		int num = 123;
+//		char buf[100] = "";
+//		inBuffIndex=0;
 
 		while(1)
 		{
 			temp = USART1_Read();
 			if(temp != empty)
 			{
-			buff[inBuffIndex] = temp;
-			inBuffIndex++;
-			temp = 0x00;
-			if(inBuffIndex >= BuffSize)
-				break;
+				inBuff1[inBuffIndex] = temp;
+				inBuffIndex++;
+				temp = 0x00;
+				if(inBuffIndex >= BuffSize)
+					inBuffIndex=0;
 			}
 			else
 				break;
 		}
-		if(inBuffIndex>0)
-		{
-			
-			strcpy(inBuff,buff);
-			switch(mode)
-			{
-				case 0: // loopback
-					SendData(buff,USART1);
-					break;
-				
-				case 1://analyse data				
-					// convert 123 to string [buf]
-					sprintf(buf,"in pack size %d\n\r",inBuffIndex);
-					
-					SendData(buf,USART1);
-					break;
-			}
-		}
+//		if(inBuffIndex>0)
+//		{
+//			
+//			strcpy(inBuff1,buff);
+//			switch(mode)
+//			{
+//				case 0: // loopback
+//					SendData(buff,USART1);
+//					break;
+//				
+//				case 1://analyse data				
+//					// convert 123 to string [buf]
+//					sprintf(buf,"in pack size %d\n\r",inBuffIndex);
+//					
+//					SendData(buf,USART1);
+//					break;
+//			}
+//		}
 
 }  
 
+void USART2_IRQHandler(void)
+{
+	
+//	while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+//	USART_SendData(USART1, 'X');
+//		char buff[BuffSize]="";
+		uint16_t temp = 0x00;
+		uint16_t empty = 0xFFFF;
+//		int num = 123;
+//		char buf[100] = "";
+		//inBuffIndex2=0;
+
+		while(1)
+		{
+			temp = USART2_Read();
+			if(temp != empty)
+			{
+				inBuff2[inBuffIndex2] = temp & 0x00FF;
+				inBuffIndex2++;
+				
+				if(inBuffIndex2 >= BuffSize)
+					inBuffIndex2=0;
+				
+				temp = 0x00;
+				
+			}
+			else
+				break;
+		}
+}
 uint16_t checkMessageID()
 {
 	//0f1
-	if (messageID[0] =='0' && messageID[1] =='F' && messageID[0] =='1')
+	char ID_0F1[] = "0F1";
+	if (strcmp(messageID, ID_0F1) == 0)
 	{
 		calcLogic[0] = 0x02;
 		calcLogic[1] = 0x01;
@@ -374,8 +470,9 @@ uint16_t checkMessageID()
 int getValue()
 {
 	int val =0;
-	
-	if (messageID[0] =='0' && messageID[1] =='F' && messageID[0] =='1')
+		//0f1
+	char ID_0F1[] = "0F1";
+	if (strcmp(messageID, ID_0F1) == 0)
 	{
 		breakeValue = val = (int)messageData[0];
 	}
@@ -387,185 +484,161 @@ int getValue()
 	return val;
 }
 
-void USART2_IRQHandler(void)
+void CanDataMessageRecord(int length,int dataLoc,char currentChar)
 {
-		char buff[BuffSize]="";
-		char temp = 0x00;
-		char empty = 0xFF;
-		int num = 123;
-		char buf[100] = "";
-		int inBuffIndex2=0;
-		char dateByt[2];
-		char infomessage[50]="";
-	
-	
-		char dataLength[1] = "";
-		strcpy(messageID,"");
-		strcpy(messageData,"");
-	
-		sprintf(infomessage,"info : Start uart 2 reading \n\r");
-		SendData(infomessage,USART1);
 
-		while(1)
+	if(dataByte_flag == False)
 		{
-			temp = USART2_Read();
-			if(temp != empty)
-			{
-			buff[inBuffIndex2] = temp;
-			inBuffIndex2++;
-			temp = 0x00;
-			if(inBuffIndex2 >= BuffSize)
-				break;
-			}
-			else
-				break;
-		}
-		int i =0;
-		char mode =0;
-		uint16_t length = 0;
-		for(i=0;i<inBuffIndex2;i++)
-		{
-			temp = buff[i];
+			dataByte_flag = True;
+			dataByte[0] =  currentChar;
 			
+		}
+		else
+		{
+			dataByte_flag = False;	
+			dataByte[1] = currentChar;// & 0x0F;
+			if(dataLoc < (length - 1))
+				mode++;
+			else
+				mode = 13;
+			messageData[dataLoc] = (int)strtoul(dataByte, NULL, 16); //atoi(dataByte); //dataByte[0] + dataByte[1]; // (char)atoi(dataByte);
+		}
+}
+	
+
+void reciveCanMessage(void)
+{
+		int i =0;
+		
+		char buf[100];	
+		char currentChar = inBuff2[readIndex2];
+		readIndex2++;
+	
+		if(readIndex2 >= BuffSize)
+			readIndex2=0;
 			switch(mode)
 			{
 				case 0:
-					if(temp=='t')
+					length = 0;
+					messageID[0] = 0;
+					messageID[1] = 0;
+					messageID[2] = 0;
+					messageData[0] = 0;
+					messageData[1] = 0;
+					messageData[2] = 0;
+					messageData[3] = 0;
+					messageData[4] = 0;
+					messageData[5] = 0;
+					messageData[6] = 0;
+					messageData[7] = 0;
+					
+					if(currentChar=='t')
 					{
 						mode = 1;
 					}
 					break;
 				case 1:
 						//get message ID
-						messageID[0] = temp;
+						messageID[0] = currentChar;
 						mode = 2;
 				break;
 				
 				case 2:
 						//get message ID
-						messageID[1] = temp;
+						messageID[1] = currentChar;
 						mode = 3;
 				break;
 				
 				case 3:
 						//get message ID
-						messageID[2] = temp;
-						sprintf(infomessage,"info : messageID =  %s\n\r",messageID);
-						SendData(infomessage,USART1);
-						if(checkMessageID() == True)
+						messageID[2] = currentChar;
+						if(checkMessageID() != True)
 							mode = 0;
 						else
 							mode = 12;
+						
+						sprintf(buf,"************* MessageID = %s\n\r",messageID);
+						SendData(buf,USART1);
 				break;
 				
 				case 4://0
-					dateByt[0] = buff[i];
-					i++;
-					dateByt[1] = buff[i];
-					messageData[0] = atoi(dateByt);
-					if((mode - 3)<length)
-						mode++;
-					else
-						mode = 13;
+					CanDataMessageRecord(length,0,currentChar);
 				break;
 				
 				case 5://1
-					dateByt[0] = buff[i];
-					i++;
-					dateByt[1] = buff[i];
-					messageData[1] = atoi(dateByt);
-				
-					if((mode - 3)<length)
-						mode++;
-					else
-						mode = 13;
+					CanDataMessageRecord(length,1,currentChar);
 				break;
 				
 				case 6://2
-					dateByt[0] = buff[i];
-					i++;
-					dateByt[1] = buff[i];
-					messageData[2] = atoi(dateByt);
-				
-					if((mode - 3)<length)
-						mode++;
-					else
-						mode = 13;
+					CanDataMessageRecord(length,2,currentChar);
 				break;
 				
 				case 7://3
-					dateByt[0] = buff[i];
-					i++;
-					dateByt[1] = buff[i];
-					messageData[3] = atoi(dateByt);
-					if((mode - 3)<length)
-						mode++;
-					else
-						mode = 13;
+					CanDataMessageRecord(length,3,currentChar);
 				break;
 				
 				case 8://4
-					dateByt[0] = buff[i];
-					i++;
-					dateByt[1] = buff[i];
-					messageData[4] = atoi(dateByt);
-					if((mode - 3)<length)
-						mode++;
-					else
-						mode = 13;
+					CanDataMessageRecord(length,4,currentChar);
 				break;
 				
 				case 9://5
-					dateByt[0] = buff[i];
-					i++;
-					dateByt[1] = buff[i];
-					messageData[5] = atoi(dateByt);
-					if((mode - 3)<length)
-						mode++;
-					else
-						mode = 13;
+					CanDataMessageRecord(length,5,currentChar);
 				break;
 				
 				case 10://6
-					dateByt[0] = buff[i];
-					i++;
-					dateByt[1] = buff[i];
-					messageData[6] = atoi(dateByt);
-					if((mode - 3)<length)
-						mode++;
-					else
-						mode = 13;
+					CanDataMessageRecord(length,6,currentChar);
 				break;
 				
 				case 11://7
-					dateByt[0] = buff[i];
-					i++;
-					dateByt[1] = buff[i];
-					messageData[7] = atoi(dateByt);
-					mode = 13;
+				CanDataMessageRecord(length,7,currentChar);
+				mode = 13;
 				break;
 				
 				case 12:
-					length = temp&0x0F;
+					length = currentChar&0x0F;
+					length--;
 					mode = 4;
 					break;
 				
-				case 13:
-					getValue();
+				default:
 					mode = 0;
-				break;
 			}
-				
-		}
-		
-		sprintf(buf,"in pack size %d\n\r",inBuffIndex2);			
-		SendData(buf,USART1);
-		
+			
+			if (mode == 13)
+			{				
+				getValue();
+				mode = 0;
+				sprintf(buf,"*************breake value = %d\n\r",breakeValue);
+				SendData(buf,USART1);
+			
+				if (GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_9) ==(uint8_t)Bit_RESET)
+					GPIO_SetBits(GPIOC,GPIO_Pin_9);
+				else
+					GPIO_ResetBits(GPIOC,GPIO_Pin_9);	
+			}
 		
 }
 
-void led_toggle(void)
+void Set_BreakOutput()
 {
+		if(breakeValue>breakLevel[5])
+		{
+		}
+		if(breakeValue>breakLevel[4])
+		{
+		}
+		if(breakeValue>breakLevel[3])
+		{
+		}
+		if(breakeValue>breakLevel[2])
+		{
+		}
+		if(breakeValue>breakLevel[1])
+		{
+		}
+		if(breakeValue>breakLevel[0])
+		{
+		}
     /* Read LED output (GPIOA PIN8) status */
     uint8_t led_bit = GPIO_ReadOutputDataBit(GPIOC, GPIO_Pin_8);
      
@@ -580,15 +653,3 @@ void led_toggle(void)
         GPIO_SetBits(GPIOC, GPIO_Pin_8);
     }
 }
-		
-//void SetLedState(int state)
-//	{
-//		GPIO_WriteBit(GetGPIOPort(StatusLed),GetGPIOPpin(StatusLed),state);
-//	}
-//			
-	
-	
-
-	
-
-
