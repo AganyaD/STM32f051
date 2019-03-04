@@ -30,7 +30,7 @@ char messageData[8] = "";
 char messageID[3]="";
 int breakeValue = 0;
 int breakLevel[6] = {30,60,90,120,150,170};
-
+char setOutput = 0;
 
 
 void led_toggle(void);
@@ -157,7 +157,8 @@ void InitGPIOs()
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-  GPIO_Init(GPIOC, &GPIO_InitStructure);
+	
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
 	
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
@@ -309,13 +310,69 @@ uint16_t readUart(USART_TypeDef* USARTx)
 }
 
 void reciveCanMessage();
-
+void Set_BreakOutput(char);
 //void InfoMessage(char *message)
 //{
 //	char buf[100];
 //	sprintf(buf,"*************breake value = %d\n\r",breakeValue);
 //	SendData(buf,USART1);
 //}
+
+void ggg()
+{
+		
+		if((int)(setOutput) != 0)
+		{
+			GPIO_SetBits(GPIOC,GPIO_Pin_0);
+		}
+		else
+		{
+			GPIO_ResetBits(GPIOC,GPIO_Pin_0);
+		}
+		
+		if((int)(setOutput) > 30)
+		{
+			GPIO_SetBits(GPIOC,GPIO_Pin_1);
+		}
+		else
+		{
+			GPIO_ResetBits(GPIOC,GPIO_Pin_1);
+		}
+		
+		if((int)(setOutput) > 60)
+		{
+			GPIO_SetBits(GPIOC,GPIO_Pin_2);
+		}
+		else
+		{
+			GPIO_ResetBits(GPIOC,GPIO_Pin_2);
+		}
+		if((int)(setOutput) > 90)
+		{
+			GPIO_SetBits(GPIOC,GPIO_Pin_3);
+		}
+		else
+		{
+			GPIO_ResetBits(GPIOC,GPIO_Pin_3);
+		}
+		if((int)(setOutput) > 120)
+		{
+			GPIO_SetBits(GPIOC,GPIO_Pin_4);
+		}
+		else
+		{
+			GPIO_ResetBits(GPIOC,GPIO_Pin_4);
+		}
+		if((int)(setOutput) > 150)
+		{
+			GPIO_SetBits(GPIOC,GPIO_Pin_5);
+		}
+		else
+		{
+			GPIO_ResetBits(GPIOC,GPIO_Pin_5);
+		}
+}
+
 /////////////////////main//////////////////////////////////////////////main/////////////////////////
 int main(void) 
 	{
@@ -326,14 +383,15 @@ int main(void)
 		InitUSART2();
 //		GPIO_Init(GPIOC,
 //		GPIO_DeInit(GPIOC);
-//		GPIO_WriteBit(GPIOC, GPIO_Pin_8, Bit_SET);
+		GPIO_WriteBit(GPIOC, GPIO_Pin_5, Bit_SET);
 //		GPIO_SetBits(GPIOC,GPIO_Pin_8);
 //		GPIO_ResetBits(GPIOC,GPIO_Pin_8);
 		SendData("Aganya - start Program Uart 2 ",USART2);
 		SendData("Aganya - start Program Uart 1 ",USART1);
 		char message[100];
 		int i =0;
-		int j = 49999;
+		int j = 1999;
+		char out=0x00;
 		
 		while(1)
 		{
@@ -361,17 +419,29 @@ int main(void)
 				j-=100;
 //				sprintf(message,"breakeValue = %d\n\r",breakeValue);
 //				SendData(message,USART1);
+				//Set_BreakOutput(out);
 				
-				if (GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_8) ==(uint8_t)Bit_RESET)
-					GPIO_SetBits(GPIOC,GPIO_Pin_8);
+				if((int)setOutput<250)
+					setOutput++;
 				else
-					GPIO_ResetBits(GPIOC,GPIO_Pin_8);
+					setOutput =0;
+				
+				if (GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_9) ==(uint8_t)Bit_RESET)
+					GPIO_SetBits(GPIOC,GPIO_Pin_9);
+				else
+					GPIO_ResetBits(GPIOC,GPIO_Pin_9);	
+				
 				i=0;
 			}
 			if (j<200)
 				j = 49999;
+			
+			
 				
+			ggg();
 		}
+		
+		
 	}
 /////////////////////main//////////////////////////////////////////////main/////////////////////////	
 void USART1_IRQHandler(void)
@@ -617,39 +687,4 @@ void reciveCanMessage(void)
 					GPIO_ResetBits(GPIOC,GPIO_Pin_9);	
 			}
 		
-}
-
-void Set_BreakOutput()
-{
-		if(breakeValue>breakLevel[5])
-		{
-		}
-		if(breakeValue>breakLevel[4])
-		{
-		}
-		if(breakeValue>breakLevel[3])
-		{
-		}
-		if(breakeValue>breakLevel[2])
-		{
-		}
-		if(breakeValue>breakLevel[1])
-		{
-		}
-		if(breakeValue>breakLevel[0])
-		{
-		}
-    /* Read LED output (GPIOA PIN8) status */
-    uint8_t led_bit = GPIO_ReadOutputDataBit(GPIOC, GPIO_Pin_8);
-     
-    /* If LED output set, clear it */
-    if(led_bit == (uint8_t)Bit_SET)
-    {
-        GPIO_ResetBits(GPIOC, GPIO_Pin_8);
-    }
-    /* If LED output clear, set it */
-    else
-    {
-        GPIO_SetBits(GPIOC, GPIO_Pin_8);
-    }
 }
