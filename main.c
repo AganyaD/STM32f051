@@ -30,7 +30,7 @@ char messageData[8] = "";
 char messageID[3]="";
 int breakeValue = 0;
 int breakLevel[6] = {30,60,90,120,150,170};
-char setOutput = 0;
+int setOutput = 0;
 
 
 void led_toggle(void);
@@ -322,7 +322,7 @@ void Set_BreakOutput(char);
 void ggg()
 {
 		
-		if((int)(setOutput) != 0)
+		if(setOutput != 0)
 		{
 			GPIO_SetBits(GPIOC,GPIO_Pin_0);
 		}
@@ -433,7 +433,7 @@ int main(void)
 				j = 49999;
 			
 			
-				
+			setOutput = breakeValue;
 			ggg();
 		}
 		
