@@ -309,6 +309,7 @@ uint16_t readUart(USART_TypeDef* USARTx)
 	return False; 
 }
 
+void reciveMainUart(void);
 void reciveCanMessage();
 void Set_BreakOutput(char);
 //void InfoMessage(char *message)
@@ -399,12 +400,7 @@ int main(void)
 			//read from uart1
 			if(readIndex!=inBuffIndex)
 			{
-				if (GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_9) ==(uint8_t)Bit_RESET)
-					GPIO_SetBits(GPIOC,GPIO_Pin_9);
-				else
-					GPIO_ResetBits(GPIOC,GPIO_Pin_9);
-				
-				
+				reciveMainUart();
 			}
 			
 			//recive UART2
@@ -450,7 +446,7 @@ void USART1_IRQHandler(void)
 //	while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
 //	USART_SendData(USART1, 'X');
 //		char buff[BuffSize]="";
-		char temp = 0x00;
+		uint16_t temp = 0x00;
 		uint16_t empty = 0xFFFF;
 //		int num = 123;
 //		char buf[100] = "";
@@ -461,33 +457,18 @@ void USART1_IRQHandler(void)
 			temp = USART1_Read();
 			if(temp != empty)
 			{
-				inBuff1[inBuffIndex] = temp;
+				inBuff1[inBuffIndex] = temp & 0x00FF;
 				inBuffIndex++;
-				temp = 0x00;
+				
 				if(inBuffIndex >= BuffSize)
 					inBuffIndex=0;
+				
+				temp = 0x00;
+				
 			}
 			else
 				break;
 		}
-//		if(inBuffIndex>0)
-//		{
-//			
-//			strcpy(inBuff1,buff);
-//			switch(mode)
-//			{
-//				case 0: // loopback
-//					SendData(buff,USART1);
-//					break;
-//				
-//				case 1://analyse data				
-//					// convert 123 to string [buf]
-//					sprintf(buf,"in pack size %d\n\r",inBuffIndex);
-//					
-//					SendData(buf,USART1);
-//					break;
-//			}
-//		}
 
 }  
 
@@ -688,3 +669,50 @@ void reciveCanMessage(void)
 			}
 		
 }
+
+
+void reciveMainUart(void)
+{
+		int i =0;
+		
+		char buf[100];	
+		char currentChar = inBuff1[readIndex];
+		readIndex++;
+	
+		if(readIndex >= BuffSize)
+			readIndex=0;
+		
+//		USART1_Send(currentChar);
+//		USART2_Send(currentChar);
+		switch(currentChar)
+		{
+			case 'S':
+			case 's':
+				USART2_Send('S');
+				USART2_Send('6');
+				USART2_Send(0x0D);
+				sprintf(buf,"set CAN to 500Kbit\n\r");
+				SendData(buf,USART1);
+				break;
+			
+			case 'O':
+			case 'o':
+				USART2_Send('O');
+				USART2_Send(0x0D);
+				sprintf(buf,"Open CAN port\n\r");
+				SendData(buf,USART1);
+				break;
+			
+			case 'C':
+			case 'c':
+				USART2_Send('C');
+				USART2_Send(0x0D);
+				
+				sprintf(buf,"Close CAN port\n\r");
+				SendData(buf,USART1);
+				break;
+			
+		}
+		
+}
+
