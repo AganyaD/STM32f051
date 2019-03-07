@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 
-#define BuffSize  300
+#define BuffSize  2000
 #define True			1
 #define False			0
 char outBuff[BuffSize];
@@ -24,7 +24,7 @@ uint16_t length = 0;
 char dataByte[2];
 uint16_t dataByte_flag = False;
 
-int Uart2Budrate = 57600;
+int Uart2Budrate = 115200;
 char calcLogic[2] = "00";
 char messageData[8] = "";
 char messageID[3]="";
@@ -391,7 +391,7 @@ int main(void)
 		SendData("Aganya - start Program Uart 1 ",USART1);
 		char message[100];
 		int i =0;
-		int j = 1999;
+		int j = 200;
 		char out=0x00;
 		
 		while(1)
@@ -412,7 +412,7 @@ int main(void)
 			i++;
 			if(i>j)
 			{
-				j-=100;
+//				j-=100;
 //				sprintf(message,"breakeValue = %d\n\r",breakeValue);
 //				SendData(message,USART1);
 				//Set_BreakOutput(out);
@@ -422,15 +422,15 @@ int main(void)
 				else
 					setOutput =0;
 				
-				if (GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_9) ==(uint8_t)Bit_RESET)
-					GPIO_SetBits(GPIOC,GPIO_Pin_9);
+				if (GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_8) ==(uint8_t)Bit_RESET)
+					GPIO_SetBits(GPIOC,GPIO_Pin_8);
 				else
-					GPIO_ResetBits(GPIOC,GPIO_Pin_9);	
+					GPIO_ResetBits(GPIOC,GPIO_Pin_8);	
 				
 				i=0;
 			}
-			if (j<200)
-				j = 49999;
+//			if (j<200)
+//				j = 20000;
 			
 			
 			setOutput = breakeValue;
@@ -440,68 +440,97 @@ int main(void)
 		
 	}
 /////////////////////main//////////////////////////////////////////////main/////////////////////////	
-void USART1_IRQHandler(void)
+	void USART1_IRQHandler(void)
 	{
-	
-//	while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-//	USART_SendData(USART1, 'X');
-//		char buff[BuffSize]="";
-		uint16_t temp = 0x00;
-		uint16_t empty = 0xFFFF;
-//		int num = 123;
-//		char buf[100] = "";
-//		inBuffIndex=0;
-
-		while(1)
+		if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET) // Characters received
 		{
-			temp = USART1_Read();
-			if(temp != empty)
-			{
-				inBuff1[inBuffIndex] = temp & 0x00FF;
-				inBuffIndex++;
+			USART_ClearFlag(USART1, USART_IT_RXNE);
+			inBuff1[inBuffIndex] = USART_ReceiveData(USART1);
+			inBuffIndex++;
+			
+			if(inBuffIndex >= BuffSize)
+				inBuffIndex=0;
 				
-				if(inBuffIndex >= BuffSize)
-					inBuffIndex=0;
-				
-				temp = 0x00;
-				
-			}
-			else
-				break;
+			//RingBufferPutChar(&uart2RXRingBuffer, USART_ReceiveData(USART2));
 		}
+	}
+//	void USART1_IRQHandler(void)
+//	{
+//	
+////	while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+////	USART_SendData(USART1, 'X');
+////		char buff[BuffSize]="";
+//		uint16_t temp = 0x00;
+//		uint16_t empty = 0xFFFF;
+////		int num = 123;
+////		char buf[100] = "";
+////		inBuffIndex=0;
 
-}  
+////		while(1)
+////		{
+//			temp = USART1_Read();
+//			if(temp != empty)
+//			{
+//				inBuff1[inBuffIndex] = temp & 0x00FF;
+//				inBuffIndex++;
+//				
+//				if(inBuffIndex >= BuffSize)
+//					inBuffIndex=0;
+//				
+////				temp = 0x00;
+//				
+//			}
+////			else
+////				break;
+////		}
 
-void USART2_IRQHandler(void)
-{
-	
-//	while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-//	USART_SendData(USART1, 'X');
-//		char buff[BuffSize]="";
-		uint16_t temp = 0x00;
-		uint16_t empty = 0xFFFF;
-//		int num = 123;
-//		char buf[100] = "";
-		//inBuffIndex2=0;
+//}  
 
-		while(1)
+	void USART2_IRQHandler(void)
+	{
+		if (USART_GetITStatus(USART2, USART_IT_RXNE) != RESET) // Characters received
 		{
-			temp = USART2_Read();
-			if(temp != empty)
-			{
-				inBuff2[inBuffIndex2] = temp & 0x00FF;
+			USART_ClearFlag(USART2, USART_IT_RXNE);
+				inBuff2[inBuffIndex2] = USART_ReceiveData(USART2);
 				inBuffIndex2++;
 				
 				if(inBuffIndex2 >= BuffSize)
 					inBuffIndex2=0;
-				
-				temp = 0x00;
-				
-			}
-			else
-				break;
+			//RingBufferPutChar(&uart2RXRingBuffer, USART_ReceiveData(USART2));
 		}
-}
+	}
+//void USART2_IRQHandler(void)
+//{
+//	
+////	while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+////	USART_SendData(USART1, 'X');
+////		char buff[BuffSize]="";
+////		uint16_t temp = 0x00;
+////		uint16_t empty = 0xFFFF;
+////		int num = 123;
+////		char buf[100] = "";
+//		//inBuffIndex2=0;
+
+////		while(1)
+////		{
+//			uint16_t temp = USART2_Read();
+//			if(temp != 0xFFFF)
+//			{
+//				inBuff2[inBuffIndex2] = temp & 0x00FF;
+//				inBuffIndex2++;
+//				
+//				if(inBuffIndex2 >= BuffSize)
+//					inBuffIndex2=0;
+//				
+////				temp = 0x00;
+//				
+//			}
+////			else
+////				break;
+////		}
+//}
+
+
 uint16_t checkMessageID()
 {
 	//0f1
@@ -709,6 +738,16 @@ void reciveMainUart(void)
 				USART2_Send(0x0D);
 				
 				sprintf(buf,"Close CAN port\n\r");
+				SendData(buf,USART1);
+				break;
+			
+			case 'U':
+			case 'u':
+				USART2_Send('U');
+				USART2_Send('1');
+				USART2_Send(0x0D);
+				
+				sprintf(buf,"Set Uart to 115200\n\r");
 				SendData(buf,USART1);
 				break;
 			
