@@ -2,6 +2,7 @@
 #include "stm32f0xx_gpio.h"     // Pins Interface
 #include "stm32f0xx_rcc.h"      // Enable peripheral clock
 #include "stm32f0xx_usart.h"      // 
+#include "STM32F0xx_HAL_Driver/src/stm32f0xx_hal_uart.h" 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>	
@@ -23,6 +24,7 @@ uint16_t tempReciveByte;
 uint16_t length = 0;
 char dataByte[2];
 uint16_t dataByte_flag = False;
+uint16_t filter_flag = False;
 
 int Uart2Budrate = 115200;
 char calcLogic[2] = "00";
@@ -32,6 +34,9 @@ int breakeValue = 0;
 int breakLevel[6] = {30,60,90,120,150,170};
 int setOutput = 0;
 
+
+USART_InitTypeDef USART_InitStructure1;
+USART_InitTypeDef USART_InitStructure2;
 
 void led_toggle(void);
 GPIO_TypeDef* GetGPIOPort(uint16_t port)
@@ -89,13 +94,13 @@ void InitUSART1()
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	USART_InitStructure.USART_BaudRate = 115200;
-	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
-	USART_InitStructure.USART_StopBits = USART_StopBits_1;
-	USART_InitStructure.USART_Parity = USART_Parity_No;
-	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
-	USART_Init(USART1, &USART_InitStructure);
+	USART_InitStructure1.USART_BaudRate = 115200;
+	USART_InitStructure1.USART_WordLength = USART_WordLength_8b;
+	USART_InitStructure1.USART_StopBits = USART_StopBits_1;
+	USART_InitStructure1.USART_Parity = USART_Parity_No;
+	USART_InitStructure1.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+	USART_InitStructure1.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+	USART_Init(USART1, &USART_InitStructure1);
 
 	USART_Cmd(USART1,ENABLE);
 
@@ -125,13 +130,13 @@ void InitUSART2()
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	USART_InitStructure.USART_BaudRate = Uart2Budrate;
-	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
-	USART_InitStructure.USART_StopBits = USART_StopBits_1;
-	USART_InitStructure.USART_Parity = USART_Parity_No;
-	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
-	USART_Init(USART2, &USART_InitStructure);
+	USART_InitStructure2.USART_BaudRate = Uart2Budrate;
+	USART_InitStructure2.USART_WordLength = USART_WordLength_8b;
+	USART_InitStructure2.USART_StopBits = USART_StopBits_1;
+	USART_InitStructure2.USART_Parity = USART_Parity_No;
+	USART_InitStructure2.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+	USART_InitStructure2.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+	USART_Init(USART2, &USART_InitStructure2);
 
 	USART_Cmd(USART2,ENABLE);
 
@@ -378,7 +383,7 @@ void ggg()
 int main(void) 
 	{
 		RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOC | RCC_APB2Periph_ADC1, ENABLE);
-		
+		HAL_Init();
 		InitGPIOs();
 		InitUSART1();
 		InitUSART2();
@@ -387,24 +392,30 @@ int main(void)
 		GPIO_WriteBit(GPIOC, GPIO_Pin_5, Bit_SET);
 //		GPIO_SetBits(GPIOC,GPIO_Pin_8);
 //		GPIO_ResetBits(GPIOC,GPIO_Pin_8);
+		
+		HAL_UART_Transmit_IT(&huart2,tx_buff ,10);
+		HAL_UART_Receive_IT(&huart2,rx_buff,10);
+		
 		SendData("Aganya - start Program Uart 2 ",USART2);
 		SendData("Aganya - start Program Uart 1 ",USART1);
+		hal
 		char message[100];
 		int i =0;
-		int j = 200;
+		int j = 20000;
 		char out=0x00;
 		
 		while(1)
 		{
 			//SendData(message);
 			//read from uart1
-			if(readIndex!=inBuffIndex)
+			
+			while(readIndex!=inBuffIndex)
 			{
 				reciveMainUart();
 			}
 			
 			//recive UART2
-			if(readIndex2 != inBuffIndex2)
+			while(readIndex2 != inBuffIndex2)
 			{
 				reciveCanMessage();
 			}
@@ -417,10 +428,10 @@ int main(void)
 //				SendData(message,USART1);
 				//Set_BreakOutput(out);
 				
-				if((int)setOutput<250)
-					setOutput++;
-				else
-					setOutput =0;
+//				if((int)setOutput<250)
+//					setOutput++;
+//				else
+//					setOutput =0;
 				
 				if (GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_8) ==(uint8_t)Bit_RESET)
 					GPIO_SetBits(GPIOC,GPIO_Pin_8);
@@ -564,6 +575,20 @@ int getValue()
 	return val;
 }
 
+uint16_t filter()
+{
+	if (filter_flag == True)
+		return True;
+		//0f1
+	char ID_0F1[] = "0F1";
+	if (strcmp(messageID, ID_0F1) != 0)
+	{
+		mode =0;
+		return False;
+	}
+	return True;
+}
+
 void CanDataMessageRecord(int length,int dataLoc,char currentChar)
 {
 
@@ -636,9 +661,11 @@ void reciveCanMessage(void)
 							mode = 0;
 						else
 							mode = 12;
-						
-						sprintf(buf,"************* MessageID = %s\n\r",messageID);
-						SendData(buf,USART1);
+						if(filter() ==True )
+						{
+							sprintf(buf,"************* MessageID = %s\n\r",messageID);
+							SendData(buf,USART1);
+						}
 				break;
 				
 				case 4://0
@@ -750,6 +777,14 @@ void reciveMainUart(void)
 				sprintf(buf,"Set Uart to 115200\n\r");
 				SendData(buf,USART1);
 				break;
+			case 'F':
+			case 'f':
+				if (filter_flag ==True)
+					filter_flag=False;
+				else
+					filter_flag=True;
+				break;
+			
 			
 		}
 		

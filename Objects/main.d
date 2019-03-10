@@ -11,6 +11,3 @@
 .\objects\main.o: .\STM32F0xx_StdPeriph_Driver\inc\stm32f0xx_rcc.h
 .\objects\main.o: .\STM32F0xx_StdPeriph_Driver\inc\stm32f0xx_misc.h
 .\objects\main.o: .\STM32F0xx_StdPeriph_Driver\inc\stm32f0xx_usart.h
-.\objects\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
-.\objects\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
-.\objects\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
