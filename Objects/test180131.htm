@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\test180131.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\test180131.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Thu Mar 07 22:11:45 2019
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Mon Mar 11 20:36:45 2019
 <BR><P>
 <H3>Maximum Stack Usage =        248 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -636,19 +636,16 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[8b]"></a>GPIO_ReadInputDataBit</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, stm32f0xx_gpio.o(i.GPIO_ReadInputDataBit))
-<BR><BR>[Called By]<UL><LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;reciveCanMessage
-<LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<BR><BR>[Called By]<UL><LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
 <P><STRONG><a name="[87]"></a>GPIO_ResetBits</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, stm32f0xx_gpio.o(i.GPIO_ResetBits))
-<BR><BR>[Called By]<UL><LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;reciveCanMessage
-<LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<BR><BR>[Called By]<UL><LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ggg
 </UL>
 
 <P><STRONG><a name="[86]"></a>GPIO_SetBits</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, stm32f0xx_gpio.o(i.GPIO_SetBits))
-<BR><BR>[Called By]<UL><LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;reciveCanMessage
-<LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<BR><BR>[Called By]<UL><LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ggg
 </UL>
 
@@ -772,7 +769,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SendData
 </UL>
 
-<P><STRONG><a name="[27]"></a>USART2_IRQHandler</STRONG> (Thumb, 66 bytes, Stack size 8 bytes, main.o(i.USART2_IRQHandler))
+<P><STRONG><a name="[27]"></a>USART2_IRQHandler</STRONG> (Thumb, 84 bytes, Stack size 8 bytes, main.o(i.USART2_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = USART2_IRQHandler &rArr; USART_GetITStatus
 </UL>
 <BR>[Calls]<UL><LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_ReceiveData
@@ -878,7 +875,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[44]"></a>main</STRONG> (Thumb, 170 bytes, Stack size 0 bytes, main.o(i.main))
+<P><STRONG><a name="[44]"></a>main</STRONG> (Thumb, 232 bytes, Stack size 0 bytes, main.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 248 + Unknown Stack Size
 <LI>Call Chain = main &rArr; reciveMainUart &rArr; SendData &rArr; strcpy
 </UL>
@@ -898,14 +895,11 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_main
 </UL>
 
-<P><STRONG><a name="[8a]"></a>reciveCanMessage</STRONG> (Thumb, 412 bytes, Stack size 112 bytes, main.o(i.reciveCanMessage))
+<P><STRONG><a name="[8a]"></a>reciveCanMessage</STRONG> (Thumb, 394 bytes, Stack size 112 bytes, main.o(i.reciveCanMessage))
 <BR><BR>[Stack]<UL><LI>Max Depth = 248 + Unknown Stack Size
 <LI>Call Chain = reciveCanMessage &rArr; SendData &rArr; strcpy
 </UL>
-<BR>[Calls]<UL><LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_SetBits
-<LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ResetBits
-<LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ReadInputDataBit
-<LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;getValue
+<BR>[Calls]<UL><LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;getValue
 <LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;checkMessageID
 <LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__ARM_common_switch8
 <LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SendData
@@ -915,7 +909,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[89]"></a>reciveMainUart</STRONG> (Thumb, 226 bytes, Stack size 112 bytes, main.o(i.reciveMainUart))
+<P><STRONG><a name="[89]"></a>reciveMainUart</STRONG> (Thumb, 280 bytes, Stack size 112 bytes, main.o(i.reciveMainUart))
 <BR><BR>[Stack]<UL><LI>Max Depth = 248 + Unknown Stack Size
 <LI>Call Chain = reciveMainUart &rArr; SendData &rArr; strcpy
 </UL>

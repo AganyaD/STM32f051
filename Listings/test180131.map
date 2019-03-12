@@ -103,9 +103,6 @@ Section Cross References
     main.o(i.reciveCanMessage) refers to main.o(i.SendData) for SendData
     main.o(i.reciveCanMessage) refers to main.o(i.CanDataMessageRecord) for CanDataMessageRecord
     main.o(i.reciveCanMessage) refers to main.o(i.getValue) for getValue
-    main.o(i.reciveCanMessage) refers to stm32f0xx_gpio.o(i.GPIO_ReadInputDataBit) for GPIO_ReadInputDataBit
-    main.o(i.reciveCanMessage) refers to stm32f0xx_gpio.o(i.GPIO_SetBits) for GPIO_SetBits
-    main.o(i.reciveCanMessage) refers to stm32f0xx_gpio.o(i.GPIO_ResetBits) for GPIO_ResetBits
     main.o(i.reciveCanMessage) refers to main.o(.bss) for inBuff2
     main.o(i.reciveCanMessage) refers to main.o(.data) for readIndex2
     main.o(i.reciveMainUart) refers to main.o(i.USART2_Send) for USART2_Send
@@ -598,38 +595,38 @@ Image Symbol Table
     i.USART1_IRQHandler                      0x08001144   Section        0  main.o(i.USART1_IRQHandler)
     i.USART1_Send                            0x08001198   Section        0  main.o(i.USART1_Send)
     i.USART2_IRQHandler                      0x080011b8   Section        0  main.o(i.USART2_IRQHandler)
-    i.USART2_Send                            0x0800120c   Section        0  main.o(i.USART2_Send)
-    i.USART_ClearFlag                        0x0800122c   Section        0  stm32f0xx_usart.o(i.USART_ClearFlag)
-    i.USART_Cmd                              0x08001230   Section        0  stm32f0xx_usart.o(i.USART_Cmd)
-    i.USART_GetFlagStatus                    0x08001248   Section        0  stm32f0xx_usart.o(i.USART_GetFlagStatus)
-    i.USART_GetITStatus                      0x0800125c   Section        0  stm32f0xx_usart.o(i.USART_GetITStatus)
-    i.USART_HalfDuplexCmd                    0x080012aa   Section        0  stm32f0xx_usart.o(i.USART_HalfDuplexCmd)
-    i.USART_ITConfig                         0x080012c2   Section        0  stm32f0xx_usart.o(i.USART_ITConfig)
-    i.USART_Init                             0x08001304   Section        0  stm32f0xx_usart.o(i.USART_Init)
-    i.USART_ReceiveData                      0x080013fc   Section        0  stm32f0xx_usart.o(i.USART_ReceiveData)
-    i.USART_SendData                         0x08001406   Section        0  stm32f0xx_usart.o(i.USART_SendData)
-    i.__ARM_common_switch8                   0x0800140e   Section        0  main.o(i.__ARM_common_switch8)
-    i.checkMessageID                         0x0800142c   Section        0  main.o(i.checkMessageID)
-    i.getValue                               0x0800145c   Section        0  main.o(i.getValue)
-    i.ggg                                    0x08001490   Section        0  main.o(i.ggg)
-    i.main                                   0x08001538   Section        0  main.o(i.main)
-    i.reciveCanMessage                       0x0800164c   Section        0  main.o(i.reciveCanMessage)
-    i.reciveMainUart                         0x08001850   Section        0  main.o(i.reciveMainUart)
-    locale$$code                             0x08001994   Section       44  lc_ctype_c.o(locale$$code)
-    locale$$data                             0x080019e0   Section      272  lc_ctype_c.o(locale$$data)
-    __lcctype_c_name                         0x080019e4   Data           2  lc_ctype_c.o(locale$$data)
-    __lcctype_c_start                        0x080019ec   Data           0  lc_ctype_c.o(locale$$data)
-    __lcctype_c_end                          0x08001af0   Data           0  lc_ctype_c.o(locale$$data)
-    .data                                    0x20000000   Section       80  main.o(.data)
-    .data                                    0x20000050   Section       16  stm32f0xx_rcc.o(.data)
-    APBAHBPrescTable                         0x20000050   Data          16  stm32f0xx_rcc.o(.data)
-    .bss                                     0x20000060   Section     6000  main.o(.bss)
-    .bss                                     0x200017d0   Section       96  libspace.o(.bss)
-    HEAP                                     0x20001830   Section      512  startup_stm32f072.o(HEAP)
-    Heap_Mem                                 0x20001830   Data         512  startup_stm32f072.o(HEAP)
-    STACK                                    0x20001a30   Section     1024  startup_stm32f072.o(STACK)
-    Stack_Mem                                0x20001a30   Data        1024  startup_stm32f072.o(STACK)
-    __initial_sp                             0x20001e30   Data           0  startup_stm32f072.o(STACK)
+    i.USART2_Send                            0x08001220   Section        0  main.o(i.USART2_Send)
+    i.USART_ClearFlag                        0x08001240   Section        0  stm32f0xx_usart.o(i.USART_ClearFlag)
+    i.USART_Cmd                              0x08001244   Section        0  stm32f0xx_usart.o(i.USART_Cmd)
+    i.USART_GetFlagStatus                    0x0800125c   Section        0  stm32f0xx_usart.o(i.USART_GetFlagStatus)
+    i.USART_GetITStatus                      0x08001270   Section        0  stm32f0xx_usart.o(i.USART_GetITStatus)
+    i.USART_HalfDuplexCmd                    0x080012be   Section        0  stm32f0xx_usart.o(i.USART_HalfDuplexCmd)
+    i.USART_ITConfig                         0x080012d6   Section        0  stm32f0xx_usart.o(i.USART_ITConfig)
+    i.USART_Init                             0x08001318   Section        0  stm32f0xx_usart.o(i.USART_Init)
+    i.USART_ReceiveData                      0x08001410   Section        0  stm32f0xx_usart.o(i.USART_ReceiveData)
+    i.USART_SendData                         0x0800141a   Section        0  stm32f0xx_usart.o(i.USART_SendData)
+    i.__ARM_common_switch8                   0x08001422   Section        0  main.o(i.__ARM_common_switch8)
+    i.checkMessageID                         0x08001440   Section        0  main.o(i.checkMessageID)
+    i.getValue                               0x08001470   Section        0  main.o(i.getValue)
+    i.ggg                                    0x080014a4   Section        0  main.o(i.ggg)
+    i.main                                   0x0800154c   Section        0  main.o(i.main)
+    i.reciveCanMessage                       0x080016a0   Section        0  main.o(i.reciveCanMessage)
+    i.reciveMainUart                         0x08001894   Section        0  main.o(i.reciveMainUart)
+    locale$$code                             0x08001a10   Section       44  lc_ctype_c.o(locale$$code)
+    locale$$data                             0x08001a5c   Section      272  lc_ctype_c.o(locale$$data)
+    __lcctype_c_name                         0x08001a60   Data           2  lc_ctype_c.o(locale$$data)
+    __lcctype_c_start                        0x08001a68   Data           0  lc_ctype_c.o(locale$$data)
+    __lcctype_c_end                          0x08001b6c   Data           0  lc_ctype_c.o(locale$$data)
+    .data                                    0x20000000   Section       84  main.o(.data)
+    .data                                    0x20000054   Section       16  stm32f0xx_rcc.o(.data)
+    APBAHBPrescTable                         0x20000054   Data          16  stm32f0xx_rcc.o(.data)
+    .bss                                     0x20000064   Section     6000  main.o(.bss)
+    .bss                                     0x200017d4   Section       96  libspace.o(.bss)
+    HEAP                                     0x20001838   Section      512  startup_stm32f072.o(HEAP)
+    Heap_Mem                                 0x20001838   Data         512  startup_stm32f072.o(HEAP)
+    STACK                                    0x20001a38   Section     1024  startup_stm32f072.o(STACK)
+    Stack_Mem                                0x20001a38   Data        1024  startup_stm32f072.o(STACK)
+    __initial_sp                             0x20001e38   Data           0  startup_stm32f072.o(STACK)
 
     Global Symbols
 
@@ -826,28 +823,28 @@ Image Symbol Table
     SystemInit                               0x080010c9   Thumb Code   110  system_stm32f0xx.o(i.SystemInit)
     USART1_IRQHandler                        0x08001145   Thumb Code    66  main.o(i.USART1_IRQHandler)
     USART1_Send                              0x08001199   Thumb Code    28  main.o(i.USART1_Send)
-    USART2_IRQHandler                        0x080011b9   Thumb Code    66  main.o(i.USART2_IRQHandler)
-    USART2_Send                              0x0800120d   Thumb Code    28  main.o(i.USART2_Send)
-    USART_ClearFlag                          0x0800122d   Thumb Code     4  stm32f0xx_usart.o(i.USART_ClearFlag)
-    USART_Cmd                                0x08001231   Thumb Code    24  stm32f0xx_usart.o(i.USART_Cmd)
-    USART_GetFlagStatus                      0x08001249   Thumb Code    20  stm32f0xx_usart.o(i.USART_GetFlagStatus)
-    USART_GetITStatus                        0x0800125d   Thumb Code    78  stm32f0xx_usart.o(i.USART_GetITStatus)
-    USART_HalfDuplexCmd                      0x080012ab   Thumb Code    24  stm32f0xx_usart.o(i.USART_HalfDuplexCmd)
-    USART_ITConfig                           0x080012c3   Thumb Code    66  stm32f0xx_usart.o(i.USART_ITConfig)
-    USART_Init                               0x08001305   Thumb Code   226  stm32f0xx_usart.o(i.USART_Init)
-    USART_ReceiveData                        0x080013fd   Thumb Code    10  stm32f0xx_usart.o(i.USART_ReceiveData)
-    USART_SendData                           0x08001407   Thumb Code     8  stm32f0xx_usart.o(i.USART_SendData)
-    __ARM_common_switch8                     0x0800140f   Thumb Code    28  main.o(i.__ARM_common_switch8)
-    checkMessageID                           0x0800142d   Thumb Code    36  main.o(i.checkMessageID)
-    getValue                                 0x0800145d   Thumb Code    36  main.o(i.getValue)
-    ggg                                      0x08001491   Thumb Code   160  main.o(i.ggg)
-    main                                     0x08001539   Thumb Code   170  main.o(i.main)
-    reciveCanMessage                         0x0800164d   Thumb Code   412  main.o(i.reciveCanMessage)
-    reciveMainUart                           0x08001851   Thumb Code   226  main.o(i.reciveMainUart)
-    _get_lc_ctype                            0x08001995   Thumb Code    44  lc_ctype_c.o(locale$$code)
-    Region$$Table$$Base                      0x080019c0   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x080019e0   Number         0  anon$$obj.o(Region$$Table)
-    __ctype                                  0x080019ed   Data           0  lc_ctype_c.o(locale$$data)
+    USART2_IRQHandler                        0x080011b9   Thumb Code    84  main.o(i.USART2_IRQHandler)
+    USART2_Send                              0x08001221   Thumb Code    28  main.o(i.USART2_Send)
+    USART_ClearFlag                          0x08001241   Thumb Code     4  stm32f0xx_usart.o(i.USART_ClearFlag)
+    USART_Cmd                                0x08001245   Thumb Code    24  stm32f0xx_usart.o(i.USART_Cmd)
+    USART_GetFlagStatus                      0x0800125d   Thumb Code    20  stm32f0xx_usart.o(i.USART_GetFlagStatus)
+    USART_GetITStatus                        0x08001271   Thumb Code    78  stm32f0xx_usart.o(i.USART_GetITStatus)
+    USART_HalfDuplexCmd                      0x080012bf   Thumb Code    24  stm32f0xx_usart.o(i.USART_HalfDuplexCmd)
+    USART_ITConfig                           0x080012d7   Thumb Code    66  stm32f0xx_usart.o(i.USART_ITConfig)
+    USART_Init                               0x08001319   Thumb Code   226  stm32f0xx_usart.o(i.USART_Init)
+    USART_ReceiveData                        0x08001411   Thumb Code    10  stm32f0xx_usart.o(i.USART_ReceiveData)
+    USART_SendData                           0x0800141b   Thumb Code     8  stm32f0xx_usart.o(i.USART_SendData)
+    __ARM_common_switch8                     0x08001423   Thumb Code    28  main.o(i.__ARM_common_switch8)
+    checkMessageID                           0x08001441   Thumb Code    36  main.o(i.checkMessageID)
+    getValue                                 0x08001471   Thumb Code    36  main.o(i.getValue)
+    ggg                                      0x080014a5   Thumb Code   160  main.o(i.ggg)
+    main                                     0x0800154d   Thumb Code   232  main.o(i.main)
+    reciveCanMessage                         0x080016a1   Thumb Code   394  main.o(i.reciveCanMessage)
+    reciveMainUart                           0x08001895   Thumb Code   280  main.o(i.reciveMainUart)
+    _get_lc_ctype                            0x08001a11   Thumb Code    44  lc_ctype_c.o(locale$$code)
+    Region$$Table$$Base                      0x08001a3c   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x08001a5c   Number         0  anon$$obj.o(Region$$Table)
+    __ctype                                  0x08001a69   Data           0  lc_ctype_c.o(locale$$data)
     inBuffIndex                              0x20000000   Data           4  main.o(.data)
     inBuffIndex2                             0x20000004   Data           4  main.o(.data)
     readIndex                                0x20000008   Data           4  main.o(.data)
@@ -857,18 +854,20 @@ Image Symbol Table
     length                                   0x20000014   Data           2  main.o(.data)
     dataByte                                 0x20000016   Data           2  main.o(.data)
     dataByte_flag                            0x20000018   Data           2  main.o(.data)
-    Uart2Budrate                             0x2000001c   Data           4  main.o(.data)
-    calcLogic                                0x20000020   Data           2  main.o(.data)
-    messageData                              0x20000022   Data           8  main.o(.data)
-    messageID                                0x2000002a   Data           3  main.o(.data)
-    breakeValue                              0x20000030   Data           4  main.o(.data)
-    breakLevel                               0x20000034   Data          24  main.o(.data)
-    setOutput                                0x2000004c   Data           4  main.o(.data)
-    outBuff                                  0x20000060   Data        2000  main.o(.bss)
-    inBuff1                                  0x20000830   Data        2000  main.o(.bss)
-    inBuff2                                  0x20001000   Data        2000  main.o(.bss)
-    __libspace_start                         0x200017d0   Data          96  libspace.o(.bss)
-    __temporary_stack_top$libspace           0x20001830   Data           0  libspace.o(.bss)
+    overflow_flag                            0x2000001a   Data           2  main.o(.data)
+    print_messageID_flag                     0x2000001c   Data           2  main.o(.data)
+    Uart2Budrate                             0x20000020   Data           4  main.o(.data)
+    calcLogic                                0x20000024   Data           2  main.o(.data)
+    messageData                              0x20000026   Data           8  main.o(.data)
+    messageID                                0x2000002e   Data           3  main.o(.data)
+    breakeValue                              0x20000034   Data           4  main.o(.data)
+    breakLevel                               0x20000038   Data          24  main.o(.data)
+    setOutput                                0x20000050   Data           4  main.o(.data)
+    outBuff                                  0x20000064   Data        2000  main.o(.bss)
+    inBuff1                                  0x20000834   Data        2000  main.o(.bss)
+    inBuff2                                  0x20001004   Data        2000  main.o(.bss)
+    __libspace_start                         0x200017d4   Data          96  libspace.o(.bss)
+    __temporary_stack_top$libspace           0x20001834   Data           0  libspace.o(.bss)
 
 
 
@@ -878,9 +877,9 @@ Memory Map of the image
 
   Image Entry point : 0x08000191
 
-  Load Region LR_1 (Base: 0x08000000, Size: 0x00001b50, Max: 0xffffffff, ABSOLUTE)
+  Load Region LR_1 (Base: 0x08000000, Size: 0x00001bd0, Max: 0xffffffff, ABSOLUTE)
 
-    Execution Region ER_RO (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x00001af0, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RO (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x00001b6c, Max: 0xffffffff, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -991,46 +990,47 @@ Memory Map of the image
     0x080010c8   0x080010c8   0x0000007c   Code   RO          216    i.SystemInit        system_stm32f0xx.o
     0x08001144   0x08001144   0x00000054   Code   RO           22    i.USART1_IRQHandler  main.o
     0x08001198   0x08001198   0x00000020   Code   RO           24    i.USART1_Send       main.o
-    0x080011b8   0x080011b8   0x00000054   Code   RO           25    i.USART2_IRQHandler  main.o
-    0x0800120c   0x0800120c   0x00000020   Code   RO           27    i.USART2_Send       main.o
-    0x0800122c   0x0800122c   0x00000004   Code   RO          626    i.USART_ClearFlag   stm32f0xx_usart.o
-    0x08001230   0x08001230   0x00000018   Code   RO          630    i.USART_Cmd         stm32f0xx_usart.o
-    0x08001248   0x08001248   0x00000014   Code   RO          638    i.USART_GetFlagStatus  stm32f0xx_usart.o
-    0x0800125c   0x0800125c   0x0000004e   Code   RO          639    i.USART_GetITStatus  stm32f0xx_usart.o
-    0x080012aa   0x080012aa   0x00000018   Code   RO          640    i.USART_HalfDuplexCmd  stm32f0xx_usart.o
-    0x080012c2   0x080012c2   0x00000042   Code   RO          641    i.USART_ITConfig    stm32f0xx_usart.o
-    0x08001304   0x08001304   0x000000f8   Code   RO          642    i.USART_Init        stm32f0xx_usart.o
-    0x080013fc   0x080013fc   0x0000000a   Code   RO          654    i.USART_ReceiveData  stm32f0xx_usart.o
-    0x08001406   0x08001406   0x00000008   Code   RO          659    i.USART_SendData    stm32f0xx_usart.o
-    0x0800140e   0x0800140e   0x0000001c   Code   RO          162    i.__ARM_common_switch8  main.o
-    0x0800142a   0x0800142a   0x00000002   PAD
-    0x0800142c   0x0800142c   0x00000030   Code   RO           28    i.checkMessageID    main.o
-    0x0800145c   0x0800145c   0x00000034   Code   RO           29    i.getValue          main.o
-    0x08001490   0x08001490   0x000000a8   Code   RO           30    i.ggg               main.o
-    0x08001538   0x08001538   0x00000114   Code   RO           31    i.main              main.o
-    0x0800164c   0x0800164c   0x00000204   Code   RO           33    i.reciveCanMessage  main.o
-    0x08001850   0x08001850   0x00000144   Code   RO           34    i.reciveMainUart    main.o
-    0x08001994   0x08001994   0x0000002c   Code   RO         1038    locale$$code        c_p.l(lc_ctype_c.o)
-    0x080019c0   0x080019c0   0x00000020   Data   RO         1180    Region$$Table       anon$$obj.o
-    0x080019e0   0x080019e0   0x00000110   Data   RO         1037    locale$$data        c_p.l(lc_ctype_c.o)
+    0x080011b8   0x080011b8   0x00000068   Code   RO           25    i.USART2_IRQHandler  main.o
+    0x08001220   0x08001220   0x00000020   Code   RO           27    i.USART2_Send       main.o
+    0x08001240   0x08001240   0x00000004   Code   RO          626    i.USART_ClearFlag   stm32f0xx_usart.o
+    0x08001244   0x08001244   0x00000018   Code   RO          630    i.USART_Cmd         stm32f0xx_usart.o
+    0x0800125c   0x0800125c   0x00000014   Code   RO          638    i.USART_GetFlagStatus  stm32f0xx_usart.o
+    0x08001270   0x08001270   0x0000004e   Code   RO          639    i.USART_GetITStatus  stm32f0xx_usart.o
+    0x080012be   0x080012be   0x00000018   Code   RO          640    i.USART_HalfDuplexCmd  stm32f0xx_usart.o
+    0x080012d6   0x080012d6   0x00000042   Code   RO          641    i.USART_ITConfig    stm32f0xx_usart.o
+    0x08001318   0x08001318   0x000000f8   Code   RO          642    i.USART_Init        stm32f0xx_usart.o
+    0x08001410   0x08001410   0x0000000a   Code   RO          654    i.USART_ReceiveData  stm32f0xx_usart.o
+    0x0800141a   0x0800141a   0x00000008   Code   RO          659    i.USART_SendData    stm32f0xx_usart.o
+    0x08001422   0x08001422   0x0000001c   Code   RO          162    i.__ARM_common_switch8  main.o
+    0x0800143e   0x0800143e   0x00000002   PAD
+    0x08001440   0x08001440   0x00000030   Code   RO           28    i.checkMessageID    main.o
+    0x08001470   0x08001470   0x00000034   Code   RO           29    i.getValue          main.o
+    0x080014a4   0x080014a4   0x000000a8   Code   RO           30    i.ggg               main.o
+    0x0800154c   0x0800154c   0x00000154   Code   RO           31    i.main              main.o
+    0x080016a0   0x080016a0   0x000001f4   Code   RO           33    i.reciveCanMessage  main.o
+    0x08001894   0x08001894   0x0000017c   Code   RO           34    i.reciveMainUart    main.o
+    0x08001a10   0x08001a10   0x0000002c   Code   RO         1038    locale$$code        c_p.l(lc_ctype_c.o)
+    0x08001a3c   0x08001a3c   0x00000020   Data   RO         1180    Region$$Table       anon$$obj.o
+    0x08001a5c   0x08001a5c   0x00000110   Data   RO         1037    locale$$data        c_p.l(lc_ctype_c.o)
 
 
-    Execution Region ER_RW (Exec base: 0x20000000, Load base: 0x08001af0, Size: 0x00000060, Max: 0xffffffff, ABSOLUTE)
-
-    Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
-
-    0x20000000   0x08001af0   0x00000050   Data   RW           36    .data               main.o
-    0x20000050   0x08001b40   0x00000010   Data   RW          396    .data               stm32f0xx_rcc.o
-
-
-    Execution Region ER_ZI (Exec base: 0x20000060, Load base: 0x08001b50, Size: 0x00001dd0, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RW (Exec base: 0x20000000, Load base: 0x08001b6c, Size: 0x00000064, Max: 0xffffffff, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x20000060        -       0x00001770   Zero   RW           35    .bss                main.o
-    0x200017d0        -       0x00000060   Zero   RW         1009    .bss                c_p.l(libspace.o)
-    0x20001830        -       0x00000200   Zero   RW            2    HEAP                startup_stm32f072.o
-    0x20001a30        -       0x00000400   Zero   RW            1    STACK               startup_stm32f072.o
+    0x20000000   0x08001b6c   0x00000054   Data   RW           36    .data               main.o
+    0x20000054   0x08001bc0   0x00000010   Data   RW          396    .data               stm32f0xx_rcc.o
+
+
+    Execution Region ER_ZI (Exec base: 0x20000064, Load base: 0x08001bd0, Size: 0x00001dd4, Max: 0xffffffff, ABSOLUTE)
+
+    Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
+
+    0x20000064        -       0x00001770   Zero   RW           35    .bss                main.o
+    0x200017d4        -       0x00000060   Zero   RW         1009    .bss                c_p.l(libspace.o)
+    0x20001834   0x08001bd0   0x00000004   PAD
+    0x20001838        -       0x00000200   Zero   RW            2    HEAP                startup_stm32f072.o
+    0x20001a38        -       0x00000400   Zero   RW            1    STACK               startup_stm32f072.o
 
 
 ==============================================================================
@@ -1040,7 +1040,7 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
-      2536        510          0         80       6000     193341   main.o
+      2660        518          0         84       6000     193512   main.o
        116         56        192          0       1536        640   startup_stm32f072.o
        252          0          0          0          0      21431   stm32f0xx_gpio.o
        680         42          0         16          0      16618   stm32f0xx_rcc.o
@@ -1048,7 +1048,7 @@ Image component sizes
        340         24          0          0          0       1537   system_stm32f0xx.o
 
     ----------------------------------------------------------------------
-      4408        654        224         96       7536     249632   Object Totals
+      4532        662        224        100       7536     249803   Object Totals
          0          0         32          0          0          0   (incl. Generated)
          2          0          0          0          0          0   (incl. Padding)
 
@@ -1102,8 +1102,8 @@ Image component sizes
          2          0          0          0          0         68   use_no_semi.o
 
     ----------------------------------------------------------------------
-      1992         76        272          0         96       2108   Library Totals
-        12          0          0          0          0          0   (incl. Padding)
+      1992         76        272          0        100       2108   Library Totals
+        12          0          0          0          4          0   (incl. Padding)
 
     ----------------------------------------------------------------------
 
@@ -1112,7 +1112,7 @@ Image component sizes
       1980         76        272          0         96       2108   c_p.l
 
     ----------------------------------------------------------------------
-      1992         76        272          0         96       2108   Library Totals
+      1992         76        272          0        100       2108   Library Totals
 
     ----------------------------------------------------------------------
 
@@ -1121,15 +1121,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-      6400        730        496         96       7632     249100   Grand Totals
-      6400        730        496         96       7632     249100   ELF Image Totals
-      6400        730        496         96          0          0   ROM Totals
+      6524        738        496        100       7636     249271   Grand Totals
+      6524        738        496        100       7636     249271   ELF Image Totals
+      6524        738        496        100          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                 6896 (   6.73kB)
-    Total RW  Size (RW Data + ZI Data)              7728 (   7.55kB)
-    Total ROM Size (Code + RO Data + RW Data)       6992 (   6.83kB)
+    Total RO  Size (Code + RO Data)                 7020 (   6.86kB)
+    Total RW  Size (RW Data + ZI Data)              7736 (   7.55kB)
+    Total ROM Size (Code + RO Data + RW Data)       7120 (   6.95kB)
 
 ==============================================================================
 

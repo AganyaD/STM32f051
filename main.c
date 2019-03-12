@@ -23,7 +23,8 @@ uint16_t tempReciveByte;
 uint16_t length = 0;
 char dataByte[2];
 uint16_t dataByte_flag = False;
-
+uint16_t overflow_flag = False;
+uint16_t print_messageID_flag = False;
 int Uart2Budrate = 115200;
 char calcLogic[2] = "00";
 char messageData[8] = "";
@@ -409,6 +410,15 @@ int main(void)
 				reciveCanMessage();
 			}
 			
+			if(overflow_flag == True)
+			{
+				overflow_flag = False;
+				
+				if (GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_9) ==(uint8_t)Bit_RESET)
+					GPIO_SetBits(GPIOC,GPIO_Pin_9);
+				else
+					GPIO_ResetBits(GPIOC,GPIO_Pin_9);	
+			}
 			i++;
 			if(i>j)
 			{
@@ -429,12 +439,11 @@ int main(void)
 				
 				i=0;
 			}
-//			if (j<200)
-//				j = 20000;
-			
-			
-			setOutput = breakeValue;
-			ggg();
+			if(setOutput != breakeValue)
+			{
+				setOutput = breakeValue;
+				ggg();
+			}
 		}
 		
 		
@@ -491,11 +500,13 @@ int main(void)
 		if (USART_GetITStatus(USART2, USART_IT_RXNE) != RESET) // Characters received
 		{
 			USART_ClearFlag(USART2, USART_IT_RXNE);
-				inBuff2[inBuffIndex2] = USART_ReceiveData(USART2);
-				inBuffIndex2++;
-				
-				if(inBuffIndex2 >= BuffSize)
-					inBuffIndex2=0;
+			if(inBuff2[inBuffIndex2] != 0x00)
+				overflow_flag = True;
+			inBuff2[inBuffIndex2] = USART_ReceiveData(USART2);
+			inBuffIndex2++;
+			
+			if(inBuffIndex2 >= BuffSize)
+				inBuffIndex2=0;
 			//RingBufferPutChar(&uart2RXRingBuffer, USART_ReceiveData(USART2));
 		}
 	}
@@ -592,6 +603,7 @@ void reciveCanMessage(void)
 		
 		char buf[100];	
 		char currentChar = inBuff2[readIndex2];
+		inBuff2[readIndex2] = 0x00;
 		readIndex2++;
 	
 		if(readIndex2 >= BuffSize)
@@ -636,9 +648,11 @@ void reciveCanMessage(void)
 							mode = 0;
 						else
 							mode = 12;
-						
+						if(print_messageID_flag == True)
+						{
 						sprintf(buf,"************* MessageID = %s\n\r",messageID);
 						SendData(buf,USART1);
+						}
 				break;
 				
 				case 4://0
@@ -690,11 +704,6 @@ void reciveCanMessage(void)
 				mode = 0;
 				sprintf(buf,"*************breake value = %d\n\r",breakeValue);
 				SendData(buf,USART1);
-			
-				if (GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_9) ==(uint8_t)Bit_RESET)
-					GPIO_SetBits(GPIOC,GPIO_Pin_9);
-				else
-					GPIO_ResetBits(GPIOC,GPIO_Pin_9);	
 			}
 		
 }
@@ -750,7 +759,22 @@ void reciveMainUart(void)
 				sprintf(buf,"Set Uart to 115200\n\r");
 				SendData(buf,USART1);
 				break;
+			//print_messageID_flag
 			
+			case 'p':
+			case 'P':
+				
+				if(print_messageID_flag ==True)
+				{
+					print_messageID_flag = False;
+				}
+				else
+				{
+					print_messageID_flag = False;
+				}
+				sprintf(buf,"Set Uart to 115200\n\r");
+				SendData(buf,USART1);
+				break;
 		}
 		
 }
